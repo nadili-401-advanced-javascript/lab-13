@@ -1,14 +1,12 @@
-# LAB - 11
-AUTH server
-
-## Express
+# LAB - 13
+## Access Control
 
 ### Author: Nadya Ilinskaya/Seattle-js-401n14
 
 ### Links and Resources
-* [submission PR](https://github.com/nadili-401-advanced-javascript/lab-11/pull/1)
-* [travis](https://travis-ci.com/nadili-401-advanced-javascript/lab-11)
-* [heroku](https://nadili-lab-11.herokuapp.com/)
+* [submission PR](https://github.com/nadili-401-advanced-javascript/lab-13/pull/1)
+* [travis](https://travis-ci.com/nadili-401-advanced-javascript/lab-13)
+* [heroku](https://nadili-lab-13.herokuapp.com/)
 
 #### Lab Quesions
 Now that we have some data about the user, how would we go about adding this user to our database?
@@ -21,13 +19,20 @@ What considerations about storing this data do we need to take?
 
 
 ### Modules
-#### `app.js`
+#### `server.js`
 #### `model.js`
-#### `router.js`
-#### `middleware.js`
+#### `roles-model.js`
+#### `roles-schema.js`
 #### `users-model.js`
+#### `users-schema.js`
+#### `auth-router.js`
+#### `role-router.js`
+#### `middleware.js`
+#### `401.js`
+#### `403.js`
 #### `404.js`
-#### `error.js`
+#### `500.js`
+#### `auth.js`
 
 ### Setup
 * config .env variables:
@@ -35,20 +40,9 @@ What considerations about storing this data do we need to take?
     * MONGODB_URI
     * JWT_SECRET
 
-    * GOOGLE_CLIENT_ID
-    * GOOGLE_CLIENT_SECRET
-    * GOOGLE_AUTH_SERVICE
-    * GOOGLE_TOKEN_SERVICE
-    * GOOGLE_API
-
-    * GITHUB_CLIENT_ID
-    * GITHUB_CLIENT_SECRET
-    * GITHUB_AUTH_SERVICE
-    * GITHUB_TOKEN_SERVICE
-    * GITHUB_API
-
-* Make sure use have local version of *app* mongo db with a collection named *users*.
-The users collection should have three unique users. Here is the data for these users (note that in the database, the passwords are stored as hashes instead of plain-text):
+* Make sure use have local version of *app* mongo db with a collections named *users* and *roles*
+The users collection should have three unique users, and the roles collection should likewise have three unique roles.
+ Here is the data for these users and roles (note that in the database, the passwords are stored as hashes instead of plain-text):
 ```
 {
     _id: "5db89b394eecc5418a3bf3c1",
@@ -72,6 +66,24 @@ The users collection should have three unique users. Here is the data for these 
     email : "rene@email.com"
 } 
 ```
+```
+{
+    _id: "5dc688d436273050875c920e",
+    role: "admin",
+    capabilities: [ "create", "read", "update", "delete", "superuser" ]
+}
+{
+    _id: "5dc688d436273050875c920f",
+    role: "editor",
+    capabilities: [ "read", "update" ]
+}
+{
+    _id: "5dc688d436273050875c9210",
+    role: "user",
+    capabilities: [ "read" ]
+}
+```
+
 #### Running the app
 * start a MongoDB instance with the data from your local mongo db folder: `mongod --dbpath=./data`
 * `node index.js`
