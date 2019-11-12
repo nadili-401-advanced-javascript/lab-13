@@ -39,8 +39,6 @@ async function bearerAuth(token) {
   let secret = process.env.SECRET || 'this-is-my-secret';
   let data;
 
-  // === TODO: Update the below code when you implement timed JWT ===
-
   try {
     let decryptedToken = jwt.verify(token, secret);
     data = decryptedToken.data;
