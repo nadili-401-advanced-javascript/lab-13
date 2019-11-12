@@ -39,10 +39,9 @@ async function bearerAuth(token) {
   let secret = process.env.SECRET || 'this-is-my-secret';
   let data;
 
-  // === TODO: Update the below code when you implement timed JWT ===
-
   try {
-    data = jwt.verify(token, secret);
+    let decryptedToken = jwt.verify(token, secret);
+    data = decryptedToken.data;
   } catch (e) {
     return { err: e.name };
   }
@@ -71,7 +70,7 @@ module.exports = async (req, res, next) => {
   else if (authType == 'Bearer') user = await bearerAuth(encodedData);
 
   if (user && user._id) {
-    let token = 'Bearer ' + user.generateToken();
+    let token = 'Bearer ' + user.generateToken(req.headers.timeout);
     req.user = user;
     req.token = token;
     next();

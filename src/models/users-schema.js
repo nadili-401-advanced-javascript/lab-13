@@ -12,15 +12,43 @@ const users = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   email: { type: String },
-  role: { type: String, default: 'user', enum: ['admin', 'editor', 'user'] },
-});
+  role: { type: String, default: 'user', enum: ['admin', 'editor', 'user']   },
+},
+{ toObject: { virtuals: true }, toJSON: { virtuals: true } },
+);
 
 // === TODO: Implement a virtual connection between users and roles, so that we can access
 // === user capabilities easily =====
 // === Utilize virtuals and the populate() mongoose method ===
 
-// === TODO: Implement a methods function can() which takes a string and returns true/false if
-// === the user has that capability ===
+// users.virtual('capabilities', {
+//   ref: 'roles',
+//   localField: 'role',
+//   foreignField: 'role',
+//   justOne: false,
+// });
+
+
+// const populateCapabilities = function() {
+//   try {
+//     this.populate('capabilities');
+//   } catch (e) {
+//     console.error('Find Error', e);
+//   }
+// };
+
+// // TODO: Comment
+// users.pre('find', populateCapabilities);
+
+// // === TODO: Implement a methods function can() which takes a string and returns true/false if
+// // === the user has that capability ===
+// const can = (capability) => {
+//   if(this.capabilities.includes(capability)){
+//     return true;
+//   }else {
+//     return false;
+//   }
+// };
 
 /**
  * Pre middleware which converts a string password into a hashed password before every save to MongoDB
@@ -52,16 +80,16 @@ users.statics.authenticateBasic = async function(auth) {
  * Because this is a methods function, `this` refers to an individual user record
  * @return {string} The generated jwt token
  */
-// === TODO implement timeout functionality for this token ====
-// === You can have your code pass generateToken a flag that ===
-// === sets a long or short (5 sec) timeout ===
-users.methods.generateToken = function() {
+
+users.methods.generateToken = function(timeout) {
+  let exp = Math.floor(Date.now() / 1000 + 60 * 60);
+  if (timeout) exp = Math.floor(Date.now() / 1000 + 5);
   let secret = process.env.SECRET || 'this-is-my-secret';
   let data = {
     id: this._id,
   };
 
-  return jwt.sign(data, secret);
+  return jwt.sign({exp, data:data}, secret);
 };
 
 /**
